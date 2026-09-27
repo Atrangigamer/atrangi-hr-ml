@@ -9,10 +9,6 @@ ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /service
 
-# CPU torch lives on a separate index; install it first so the constraint is
-# set before sentence-transformers pulls in a full CUDA wheel.
-RUN pip install torch==2.7.1+cpu --index-url https://download.pytorch.org/whl/cpu --no-cache-dir
-
 COPY requirements.free.txt ./
 RUN pip install -r requirements.free.txt --no-cache-dir \
     && pip check
@@ -22,9 +18,8 @@ RUN groupadd --gid 10001 mlservice \
 
 COPY --chown=mlservice:mlservice app ./app
 
-# Embed the embedding model weights so no volume mount is needed at runtime.
-# Run scripts/download_models.py locally first so models/embedding exists.
-COPY --chown=mlservice:mlservice models/embedding /models/embedding
+# Embed the ONNX embedding model (no PyTorch needed at runtime).
+COPY --chown=mlservice:mlservice models/embedding_onnx /models/embedding
 
 USER mlservice
 EXPOSE 8000

@@ -22,20 +22,32 @@ jobs:
 
       - name: Download embedding model weights into build context
         run: |
-          pip install "huggingface_hub>=0.34,<2" --quiet
+          pip install "huggingface_hub>=0.34,<2" "optimum[onnxruntime]" "sentence-transformers==6.1.0" "transformers==5.17.0" --quiet
           python - <<'PYEOF'
           import os
           from huggingface_hub import snapshot_download
-          # Must land inside the Docker build context (repo root)
+          from optimum.onnxruntime import ORTModelForFeatureExtraction
+          from transformers import AutoTokenizer
+
           dest = os.path.join(os.environ["GITHUB_WORKSPACE"], "models", "embedding")
+          os.makedirs(dest, exist_ok=True)
+
+          # Download original weights
           snapshot_download(
               repo_id="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
               local_dir=dest,
               ignore_patterns=["*.h5", "*.ot", "flax_model*", "tf_model*", "rust_model*"],
           )
-          print(f"Downloaded to: {dest}")
+
+          # Export to ONNX so runtime needs no PyTorch
+          ort_dest = os.path.join(os.environ["GITHUB_WORKSPACE"], "models", "embedding_onnx")
+          model = ORTModelForFeatureExtraction.from_pretrained(dest, export=True)
+          tokenizer = AutoTokenizer.from_pretrained(dest)
+          model.save_pretrained(ort_dest)
+          tokenizer.save_pretrained(ort_dest)
+          print(f"ONNX model saved to: {ort_dest}")
           PYEOF
-          ls -la models/embedding/
+          ls -la models/embedding_onnx/
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
