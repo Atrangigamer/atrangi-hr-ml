@@ -7,7 +7,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: atrangig/atrangi-hr-ml
+  IMAGE_NAME: atrangigamer/atrangi-hr-ml
 
 jobs:
   build-and-push:
@@ -51,5 +51,5 @@ jobs:
           file: ./Dockerfile.free
           push: true
           tags: |
-            ghcr.io/atrangig/atrangi-hr-ml:latest
-            ghcr.io/atrangig/atrangi-hr-ml:${{ github.sha }}
+            ghcr.io/atrangigamer/atrangi-hr-ml:latest
+            ghcr.io/atrangigamer/atrangi-hr-ml:${{ github.sha }}
