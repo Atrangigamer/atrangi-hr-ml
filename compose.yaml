@@ -1,0 +1,35 @@
+services:
+  ml:
+    build:
+      context: .
+      dockerfile: ${ML_DOCKERFILE:-Dockerfile}
+      args:
+        CUDA_ARCHITECTURES: ${CUDA_ARCHITECTURES:-120}
+    image: atrangi-hr-ml:cuda
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - ./models:/models:ro
+    environment:
+      ML_LLM_PROVIDER: ${ML_LLM_PROVIDER:-local}
+      ML_OPENAI_API_KEY: ${ML_OPENAI_API_KEY:-}
+      ML_GEMINI_API_KEY: ${ML_GEMINI_API_KEY:-}
+      ML_ANTIGRAVITY_MODEL: ${ML_ANTIGRAVITY_MODEL:-gemini-3.7-flash}
+      ML_ANTIGRAVITY_TOKEN_BUDGET: ${ML_ANTIGRAVITY_TOKEN_BUDGET:-8192}
+      ML_GEMINI_MODEL: ${ML_GEMINI_MODEL:-gemini-3.8-flash}
+      ML_GEMINI_MAX_TOKENS: ${ML_GEMINI_MAX_TOKENS:-8192}
+      ML_OPENAI_MODEL: ${ML_OPENAI_MODEL:-gpt-4o-mini}
+      ML_LLM_MODEL_PATH: /models/resume.gguf
+      ML_EMBEDDING_MODEL: /models/embedding
+      ML_LLM_CONTEXT: ${ML_LLM_CONTEXT:-4096}
+      ML_LLM_MAX_TOKENS: ${ML_LLM_MAX_TOKENS:-1024}
+      ML_GPU_CONCURRENCY: "1"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    shm_size: 1gb
+    stop_grace_period: 180s

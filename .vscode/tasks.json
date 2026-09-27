@@ -1,0 +1,80 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "HR: Run existing demo (no rebuild)",
+      "type": "process",
+      "command": "docker",
+      "args": [
+        "compose",
+        "up",
+        "-d",
+        "--no-build",
+        "--wait",
+        "--wait-timeout",
+        "180"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "HR: Install and run CUDA",
+      "type": "process",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-File",
+        "${workspaceFolder}/install_and_run.ps1"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "HR: Start service",
+      "type": "process",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-File",
+        "${workspaceFolder}/start.ps1"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "HR: Service status",
+      "type": "process",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-File",
+        "${workspaceFolder}/status.ps1"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "HR: Stop service",
+      "type": "process",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-File",
+        "${workspaceFolder}/stop.ps1"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "HR: Regression tests",
+      "type": "process",
+      "command": "${workspaceFolder}/.venv/Scripts/python.exe",
+      "args": [
+        "-m",
+        "pytest",
+        "tests",
+        "-q"
+      ],
+      "group": "test",
+      "problemMatcher": []
+    }
+  ]
+}

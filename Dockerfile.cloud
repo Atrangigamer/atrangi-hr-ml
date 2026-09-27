@@ -1,0 +1,21 @@
+# Cloud resume extraction plus local NVIDIA CUDA embeddings.
+FROM pytorch/pytorch:2.10.0-cuda12.8-cudnn9-runtime@sha256:b85566342b86d13a67712e9315d40cdc2dad7f8d86df1aff3831f80835edbcca
+USER root
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 \
+    HF_HUB_DISABLE_TELEMETRY=1 TOKENIZERS_PARALLELISM=false
+WORKDIR /service
+RUN python -m venv --without-pip --system-site-packages /opt/ml-venv
+ENV PATH="/opt/ml-venv/bin:${PATH}"
+COPY requirements.txt ./
+# llama.cpp is needed only for local extraction; retain the base CUDA Torch wheel.
+RUN python -c "import torch; assert torch.version.cuda; open('/tmp/torch-constraint.txt','w').write('torch=='+torch.__version__+'\n'); open('/tmp/cloud-requirements.txt','w').writelines(line for line in open('requirements.txt') if not line.startswith('llama-cpp-python'))" \
+    && python -m pip install -c /tmp/torch-constraint.txt -r /tmp/cloud-requirements.txt \
+    && python -m pip check
+RUN groupadd --gid 10001 mlservice && useradd --uid 10001 --gid mlservice --create-home mlservice
+COPY --chown=mlservice:mlservice app ./app
+USER mlservice
+EXPOSE 8000
+HEALTHCHECK --interval=30s --timeout=5s --start-period=300s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready', timeout=3)" || exit 1
+CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1", "--limit-concurrency", "16", "--timeout-keep-alive", "5", "--no-access-log"]

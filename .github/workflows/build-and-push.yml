@@ -1,0 +1,50 @@
+name: Build and push Docker image to ghcr.io
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: atrangig/atrangi-hr-ml
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download embedding model weights
+        run: |
+          pip install "huggingface_hub>=0.34,<2" --quiet
+          python - <<'PYEOF'
+          from huggingface_hub import snapshot_download
+          snapshot_download(
+              repo_id="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+              local_dir="models/embedding",
+              ignore_patterns=["*.h5", "*.ot", "flax_model*", "tf_model*", "rust_model*"],
+          )
+          PYEOF
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile.free
+          push: true
+          tags: |
+            ghcr.io/atrangig/atrangi-hr-ml:latest
+            ghcr.io/atrangig/atrangi-hr-ml:${{ github.sha }}

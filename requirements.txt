@@ -1,0 +1,17 @@
+# Python >=3.10. Torch is supplied by the CUDA base image, not PyPI.
+# Compatible with the base image's spin utility and Instructor/Typer.
+click==8.3.3
+fastapi==0.141.1
+starlette==1.7.0
+uvicorn[standard]==0.53.0
+pydantic==2.13.5
+pydantic-settings==2.15.0
+python-multipart==0.0.32
+sentence-transformers==6.1.0
+transformers==5.17.0
+instructor==1.17.0
+openai==2.26.0
+llama-cpp-python==0.3.35
+pdfplumber==0.11.10
+pypdf==6.19.0
+httpx==0.28.1

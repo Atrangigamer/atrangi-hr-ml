@@ -1,0 +1,20 @@
+{
+  "timestamp_utc": "2026-09-27T08:33:11.989911+00:00",
+  "docker_build": "passed",
+  "cuda_tensor_test": "passed",
+  "gpu": "NVIDIA GeForce RTX 5060 Laptop GPU",
+  "real_embedding_dimensions": 384,
+  "real_embedding_unit_norm": "passed",
+  "cloud_adapter_source_hash_matches_image": true,
+  "gemini_startup": "passed",
+  "http_service_live": true,
+  "full_service_verified": true,
+  "gemini_resume_endpoint": "English PDF passed HTTP 200; subsequent Spanish PDF failed HTTP 503 from upstream Gemini HTTP 503. Further requests stopped.",
+  "live_embedding_endpoint": "HTTP 200, normalized 384-dimensional vector",
+  "latest_evidence": "antigravity_verification.json",
+  "latest_checked_at": "2026-09-27T09:11:00.893943+00:00",
+  "current_status": "READY",
+  "latest_acceptance_passed": true,
+  "provider": "antigravity",
+  "underlying_model": "gemini-3.7-flash"
+}

@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+models/
+tests/
+*.pdf
+.env
+.model-download-cache/
+installation.log
+INSTALL_STATUS.json

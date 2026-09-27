@@ -1,0 +1,14 @@
+{
+  "checked_at": "2026-09-27T08:32:21.844018+00:00",
+  "synthetic_inputs_only": true,
+  "ready": true,
+  "parse_status": 200,
+  "parse_seconds": 4.039,
+  "resume_schema": true,
+  "synthetic_fields_match": true,
+  "embedding_status": 200,
+  "embedding_seconds": 0.016,
+  "embedding_384": true,
+  "normalized": true,
+  "all_passed": true
+}

@@ -1,0 +1,99 @@
+{
+  "checked_at": "2026-09-27T08:44:00.360848+00:00",
+  "scope": "Real localhost HTTP, Gemini PDFs, CUDA embeddings and reference client. Synthetic diagnostic cases only; not a held-out accuracy benchmark.",
+  "checks": [
+    {
+      "name": "readiness",
+      "passed": true
+    },
+    {
+      "name": "blank",
+      "passed": true,
+      "status": 422
+    },
+    {
+      "name": "extra_field",
+      "passed": true,
+      "status": 422
+    },
+    {
+      "name": "wrong_type",
+      "passed": true,
+      "status": 422
+    },
+    {
+      "name": "missing",
+      "passed": true,
+      "status": 422
+    },
+    {
+      "name": "token_limit",
+      "passed": true,
+      "status": 422
+    },
+    {
+      "name": "invalid_pdf",
+      "passed": true,
+      "status": 400
+    },
+    {
+      "name": "empty_pdf",
+      "passed": true,
+      "status": 400
+    },
+    {
+      "name": "blank_pdf",
+      "passed": true,
+      "status": 400
+    },
+    {
+      "name": "encrypted_pdf",
+      "passed": true,
+      "status": 400
+    },
+    {
+      "name": "body_limit",
+      "passed": true,
+      "status": 413
+    },
+    {
+      "name": "concurrent_real_embeddings",
+      "passed": true,
+      "requests": 24,
+      "concurrency": 4,
+      "p50_seconds": 0.031,
+      "p95_seconds": 0.032
+    },
+    {
+      "name": "english_customer_service",
+      "passed": true,
+      "status": 200,
+      "fields": {
+        "candidate_name": true,
+        "email": true,
+        "experience_years": true,
+        "education": true
+      },
+      "seconds": 17.875
+    },
+    {
+      "name": "spanish_accounting",
+      "passed": false,
+      "status": 503,
+      "fields": {},
+      "seconds": 6.688
+    },
+    {
+      "name": "backend_client_and_analytics",
+      "passed": true
+    }
+  ],
+  "extraction_stopped_early": true,
+  "all_passed": false,
+  "skipped_extraction_cases": [
+    "missing_information",
+    "embedded_instruction",
+    "healthcare_education"
+  ],
+  "provider_failure_diagnosis": "Latest sanitized container log: Gemini InternalServerError, upstream HTTP 503."
+}

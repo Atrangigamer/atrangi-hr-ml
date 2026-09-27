@@ -1,0 +1,37 @@
+{
+  "timestamp_utc": "2026-09-26T10:47:03.163092+00:00",
+  "provider": "gemini",
+  "model": "gemini-3.8-flash",
+  "scope": "Four synthetic text cases; selected exact fields only. No PDF/GPU test, representative accuracy, skill recall, education accuracy or summary assessment.",
+  "cases": [
+    {
+      "id": "english_customer_service",
+      "passed": false,
+      "error_type": "ServiceError",
+      "seconds": 5.203
+    },
+    {
+      "id": "spanish_accounting",
+      "passed": false,
+      "error_type": "ServiceError",
+      "seconds": 12.0
+    },
+    {
+      "id": "missing_information",
+      "passed": false,
+      "error_type": "ServiceError",
+      "seconds": 3.89
+    },
+    {
+      "id": "embedded_instruction",
+      "checks": {
+        "candidate_name": true,
+        "email": true,
+        "experience_years": true,
+        "education": true
+      },
+      "passed": true,
+      "seconds": 3.5
+    }
+  ]
+}

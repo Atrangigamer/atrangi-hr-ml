@@ -1,0 +1,19 @@
+# CPU-only free-tier deployment. No CUDA, no llama-cpp-python.
+# Extraction uses Antigravity (Gemini 3.7 Flash) via ML_GEMINI_API_KEY.
+# Embeddings run on CPU (~200-400 ms/request vs ~30 ms on CUDA).
+click==8.3.3
+fastapi==0.141.1
+starlette==1.7.0
+uvicorn[standard]==0.53.0
+pydantic==2.13.5
+pydantic-settings==2.15.0
+python-multipart==0.0.32
+# CPU PyTorch (no CUDA build — ~220 MB vs ~2 GB)
+torch==2.7.1+cpu
+sentence-transformers==6.1.0
+transformers==5.17.0
+instructor==1.17.0
+openai==2.26.0
+pdfplumber==0.11.10
+pypdf==6.19.0
+httpx==0.28.1

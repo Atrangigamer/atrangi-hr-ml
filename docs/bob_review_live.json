@@ -1,0 +1,11 @@
+{
+  "checked_at": "2026-09-27T10:04:01.126255+00:00",
+  "ready_status": 200,
+  "embedding_status": 200,
+  "dimensions": 384,
+  "norm": 0.999999939890133,
+  "image_matches_source": true,
+  "antigravity_startup_warmup": "passed",
+  "resume_endpoint_retested": false,
+  "passed": true
+}

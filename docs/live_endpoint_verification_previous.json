@@ -1,0 +1,15 @@
+{
+  "timestamp_utc": "2026-09-26T18:36:32.394453+00:00",
+  "input": "synthetic resume only",
+  "checks": {
+    "ready": true,
+    "resume_schema": false,
+    "embedding_384": true,
+    "embedding_normalized": true
+  },
+  "parse_http_status": 503,
+  "parse_seconds": 3.078,
+  "embedding_http_status": 200,
+  "embedding_seconds": 0.032,
+  "all_passed": false
+}

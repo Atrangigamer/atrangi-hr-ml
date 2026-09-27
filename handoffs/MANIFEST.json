@@ -1,0 +1,58 @@
+{
+  "Hazma_Backend.zip": {
+    "sha256": "81c30bf4abc433047f079792b75a5711d9e25962b4255b1b31f876dc21e745fb",
+    "files": [
+      "docs/ANTIGRAVITY_PROVIDER.md",
+      "docs/TEAM_HANDOFF.md",
+      "docs/INTEGRATION_CHECKLIST.md",
+      "docs/FULL_HR_BLUEPRINT.md",
+      "docs/BOB_MODULE_PROMPTS.md",
+      "docs/UNIVERSAL_HR_SCOPE.md",
+      "docs/API_CONTRACT.md",
+      "docs/RELEASE_STATUS.md",
+      "docs/openapi.json",
+      "integrations/__init__.py",
+      "integrations/backend_client.py",
+      "app/__init__.py",
+      "app/schemas.py",
+      "app/utils.py",
+      "START_HERE.md",
+      "requirements-integration.txt",
+      "models/model_manifest.json"
+    ]
+  },
+  "Analytics_Lead.zip": {
+    "sha256": "2454672a20938f844127a994a1092bd8ed30874a93480056fd9dbbaf17cf7c12",
+    "files": [
+      "docs/ANTIGRAVITY_PROVIDER.md",
+      "docs/TEAM_HANDOFF.md",
+      "docs/INTEGRATION_CHECKLIST.md",
+      "docs/FULL_HR_BLUEPRINT.md",
+      "docs/BOB_MODULE_PROMPTS.md",
+      "docs/UNIVERSAL_HR_SCOPE.md",
+      "docs/API_CONTRACT.md",
+      "docs/RELEASE_STATUS.md",
+      "docs/ANALYTICS_HANDOFF.md",
+      "app/__init__.py",
+      "app/utils.py",
+      "START_HERE.md",
+      "models/model_manifest.json"
+    ]
+  },
+  "Ele_Frontend.zip": {
+    "sha256": "9292e0fe2f1710ef3ff7aeaa2308e984a98a22ce2cd3ff8bc5f70e50892376f6",
+    "files": [
+      "docs/ANTIGRAVITY_PROVIDER.md",
+      "docs/TEAM_HANDOFF.md",
+      "docs/INTEGRATION_CHECKLIST.md",
+      "docs/FULL_HR_BLUEPRINT.md",
+      "docs/BOB_MODULE_PROMPTS.md",
+      "docs/UNIVERSAL_HR_SCOPE.md",
+      "docs/API_CONTRACT.md",
+      "docs/RELEASE_STATUS.md",
+      "docs/FRONTEND_HANDOFF.md",
+      "docs/openapi.json",
+      "START_HERE.md"
+    ]
+  }
+}

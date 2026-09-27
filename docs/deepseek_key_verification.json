@@ -1,0 +1,10 @@
+{
+  "checked_at": "2026-09-27T08:52:34.423684+00:00",
+  "provider": "deepseek",
+  "service_provider_changed": false,
+  "authentication_http_status": 200,
+  "model": "deepseek-flash",
+  "generation_http_status": 402,
+  "generation_succeeded": false,
+  "failure_category": "insufficient_balance"
+}

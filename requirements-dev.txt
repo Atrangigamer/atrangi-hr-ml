@@ -1,0 +1,19 @@
+# CPU contract tests deliberately do not install PyTorch or llama.cpp.
+fastapi==0.141.1
+uvicorn==0.53.0
+starlette==1.7.0
+pydantic==2.13.5
+pydantic-settings==2.15.0
+python-multipart==0.0.32
+pdfplumber==0.11.10
+pypdf==6.19.0
+httpx==0.28.1
+httpx2==2.13.1
+instructor==1.17.0
+openai==2.26.0
+pytest==8.4.1
+pytest-asyncio==1.0.0
+reportlab==4.4.2
+ruff==0.16.9
+
+click==8.3.3

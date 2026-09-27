@@ -1,0 +1,10 @@
+.venv*/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+models/
+.env
+*.log
+.model-download-cache/
+INSTALL_STATUS.json
+synthetic-install-test.pdf

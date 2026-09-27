@@ -1,0 +1,24 @@
+# Free-tier CPU compose config — no GPU reservation, public port binding.
+# Use: docker compose -f compose.free.yaml up
+# Requires: models/embedding present, .env with ML_GEMINI_API_KEY set.
+services:
+  ml:
+    build:
+      context: .
+      dockerfile: Dockerfile.free
+    image: atrangi-hr-ml:free
+    ports:
+      - "0.0.0.0:8000:8000"
+    volumes:
+      - ./models:/models:ro
+    environment:
+      ML_LLM_PROVIDER: ${ML_LLM_PROVIDER:-antigravity}
+      ML_GEMINI_API_KEY: ${ML_GEMINI_API_KEY:-}
+      ML_ANTIGRAVITY_MODEL: ${ML_ANTIGRAVITY_MODEL:-gemini-3.7-flash}
+      ML_ANTIGRAVITY_TOKEN_BUDGET: ${ML_ANTIGRAVITY_TOKEN_BUDGET:-8192}
+      ML_EMBEDDING_MODEL: /models/embedding
+      ML_LLM_CONTEXT: "4096"
+      ML_LLM_MAX_TOKENS: "1024"
+      ML_GPU_CONCURRENCY: "1"
+    shm_size: 512mb
+    stop_grace_period: 60s

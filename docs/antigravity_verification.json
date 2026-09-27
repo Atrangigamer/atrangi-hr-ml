@@ -1,0 +1,14 @@
+{
+  "checked_at": "2026-09-27T09:11:00.893943+00:00",
+  "provider": "antigravity",
+  "agent": "antigravity-preview-09-2026",
+  "underlying_model": "gemini-3.7-flash",
+  "synthetic_only": true,
+  "ready": true,
+  "resume_status": 200,
+  "resume_seconds": 10.391,
+  "resume_fields_pass": true,
+  "embedding_status": 200,
+  "embedding_pass": true,
+  "all_passed": true
+}

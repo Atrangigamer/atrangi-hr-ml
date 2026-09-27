@@ -1,0 +1,27 @@
+{
+  "http_status": 200,
+  "status": "completed",
+  "step_shapes": [
+    {
+      "type": "thought",
+      "keys": [
+        "summary",
+        "type"
+      ],
+      "content": null
+    },
+    {
+      "type": "model_output",
+      "keys": [
+        "content",
+        "type"
+      ],
+      "content": [
+        {
+          "text": "{\n  \"candidate_name\": \"Alex Rivera\",\n  \"email\": \"alex@example.com\",\n  \"skills\": [\n    \"Excel\"\n  ],\n  \"experience_years\": 3.0,\n  \"education\": [],\n  \"summary\": \"Alex Rivera has 3 years of total professional experience with skills in Excel.\"\n}",
+          "type": "text"
+        }
+      ]
+    }
+  ]
+}
