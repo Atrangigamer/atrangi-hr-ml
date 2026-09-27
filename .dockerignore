@@ -3,11 +3,11 @@ __pycache__/
 .pytest_cache/
 .venv/
 models/
-!models/embedding
-!models/embedding/**
 tests/
 *.pdf
 .env
 .model-download-cache/
 installation.log
 INSTALL_STATUS.json
+.git/
+.venv*/

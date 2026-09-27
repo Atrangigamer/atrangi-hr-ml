@@ -17,7 +17,6 @@ from .config import Settings
 from .embeddings import Embedder
 from .errors import InvalidPDF, ServiceError
 from .extractors import ResumeExtractor, extract_pdf_text
-from .openai_extractor import OpenAIExtractor
 from .runtime import BoundedRunner, finish_before_cancelling
 from .schemas import EmbeddingRequest, EmbeddingResponse, ErrorResponse, ResumeSchema
 
@@ -96,9 +95,15 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             # between constructor completion and await return cannot lose it.
             embedding_model = Embedder(config.embedding_model)
             resources.append(embedding_model)
-            extraction_model = (AntigravityExtractor(config) if config.llm_provider == "antigravity"
-                                else OpenAIExtractor(config) if config.llm_provider in ("openai", "gemini")
-                                else ResumeExtractor(config))
+            if config.llm_provider == "antigravity":
+                extraction_model = AntigravityExtractor(config)
+            elif config.llm_provider in ("openai", "gemini"):
+                # Avoid importing Instructor and its SDK stack in the small ONNX demo.
+                from .openai_extractor import OpenAIExtractor
+
+                extraction_model = OpenAIExtractor(config)
+            else:
+                extraction_model = ResumeExtractor(config)
             resources.append(extraction_model)
             return embedding_model, extraction_model
 

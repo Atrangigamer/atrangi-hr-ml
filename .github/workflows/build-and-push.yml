@@ -20,35 +20,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Download embedding model weights into build context
-        run: |
-          pip install "huggingface_hub>=0.34,<2" "optimum[onnxruntime]" "sentence-transformers==6.1.0" "transformers==5.17.0" --quiet
-          python - <<'PYEOF'
-          import os
-          from huggingface_hub import snapshot_download
-          from optimum.onnxruntime import ORTModelForFeatureExtraction
-          from transformers import AutoTokenizer
-
-          dest = os.path.join(os.environ["GITHUB_WORKSPACE"], "models", "embedding")
-          os.makedirs(dest, exist_ok=True)
-
-          # Download original weights
-          snapshot_download(
-              repo_id="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-              local_dir=dest,
-              ignore_patterns=["*.h5", "*.ot", "flax_model*", "tf_model*", "rust_model*"],
-          )
-
-          # Export to ONNX so runtime needs no PyTorch
-          ort_dest = os.path.join(os.environ["GITHUB_WORKSPACE"], "models", "embedding_onnx")
-          model = ORTModelForFeatureExtraction.from_pretrained(dest, export=True)
-          tokenizer = AutoTokenizer.from_pretrained(dest)
-          model.save_pretrained(ort_dest)
-          tokenizer.save_pretrained(ort_dest)
-          print(f"ONNX model saved to: {ort_dest}")
-          PYEOF
-          ls -la models/embedding_onnx/
-
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -56,12 +27,22 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push image
+      - name: Build image
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile.free
-          push: true
+          load: true
+          push: false
           tags: |
             ghcr.io/atrangigamer/atrangi-hr-ml:latest
             ghcr.io/atrangigamer/atrangi-hr-ml:${{ github.sha }}
+
+      - name: Verify real ONNX inference within 512 MiB
+        run: |
+          docker run --rm --memory=512m --memory-swap=512m ghcr.io/atrangigamer/atrangi-hr-ml:latest python -c "import importlib.util,math; assert importlib.util.find_spec('torch') is None; from app.embeddings import Embedder; m=Embedder('/models/embedding'); v=m.embed('Customer service and Excel'); assert len(v)==384 and abs(math.hypot(*v)-1)<1e-5"
+
+      - name: Publish verified image
+        run: |
+          docker push ghcr.io/atrangigamer/atrangi-hr-ml:latest
+          docker push ghcr.io/atrangigamer/atrangi-hr-ml:${{ github.sha }}

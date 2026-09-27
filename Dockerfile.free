@@ -1,11 +1,18 @@
 # CPU-only free-tier image — no CUDA toolchain, no llama-cpp-python.
-# ~700 MB image vs ~8 GB CUDA build image.
-# Extraction: Antigravity/Gemini via API key. Embeddings: sentence-transformers on CPU.
+# Extraction: Antigravity API. Embeddings: pinned quantized ONNX on CPU.
+FROM python:3.12-slim AS weights
+COPY scripts/download_onnx.py /download_onnx.py
+RUN python /download_onnx.py /models/embedding
+
 FROM python:3.12-slim
 
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 \
-    HF_HUB_DISABLE_TELEMETRY=1 TOKENIZERS_PARALLELISM=false
+    HF_HUB_DISABLE_TELEMETRY=1 TOKENIZERS_PARALLELISM=false \
+    ML_EMBEDDING_BACKEND=onnx ML_EMBEDDING_MODEL=/models/embedding \
+    ML_LLM_PROVIDER=antigravity ML_ANTIGRAVITY_MODEL=gemini-3.7-flash \
+    MALLOC_ARENA_MAX=2 OMP_NUM_THREADS=1 \
+    ML_MAX_PDF_BYTES=2097152 ML_MAX_PDF_PAGES=10 ML_PDF_CONCURRENCY=1
 
 WORKDIR /service
 
@@ -19,7 +26,7 @@ RUN groupadd --gid 10001 mlservice \
 COPY --chown=mlservice:mlservice app ./app
 
 # Embed the ONNX embedding model (no PyTorch needed at runtime).
-COPY --chown=mlservice:mlservice models/embedding_onnx /models/embedding
+COPY --from=weights --chown=mlservice:mlservice /models/embedding /models/embedding
 
 USER mlservice
 EXPOSE 8000
@@ -29,5 +36,5 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=120s --retries=3 \
 
 CMD ["python", "-m", "uvicorn", "app.main:app", \
      "--host", "0.0.0.0", "--port", "8000", \
-     "--workers", "1", "--limit-concurrency", "8", \
+     "--workers", "1", "--limit-concurrency", "4", \
      "--timeout-keep-alive", "5", "--no-access-log"]

@@ -1,0 +1,20 @@
+{
+  "started_utc": "2026-09-27T13:56:22.981016+00:00",
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "scope": "CPU regression tests and real local HTTP; native models are doubled",
+  "requested_rounds": 2,
+  "rounds": [
+    {
+      "round": 1,
+      "exit_code": 0,
+      "seconds": 6.687,
+      "output": "........................................................................ [ 88%]\n.........                                                                [100%]\n81 passed in 5.71s\n"
+    },
+    {
+      "round": 2,
+      "exit_code": 0,
+      "seconds": 7.094,
+      "output": "........................................................................ [ 88%]\n.........                                                                [100%]\n81 passed in 5.97s\n"
+    }
+  ]
+}

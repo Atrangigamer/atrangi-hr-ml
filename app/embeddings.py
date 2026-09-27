@@ -1,4 +1,4 @@
-"""Embedding model loader: CUDA > CPU PyTorch > ONNX Runtime, in priority order."""
+"""Explicit ONNX CPU deployment or PyTorch CUDA/CPU embedding backends."""
 
 import logging
 import math
@@ -16,41 +16,44 @@ class Embedder:
     """Own the startup-loaded model; invoke only under the shared inference gate."""
 
     def __init__(self, model_path: str) -> None:
-        self._use_onnx = False
-        try:
-            import torch  # noqa: PLC0415
-            if torch.version.hip:
-                raise RuntimeError("ROCm/HIP PyTorch is not supported.")
-            cuda_ok = bool(torch.version.cuda) and torch.cuda.is_available()
-            device = "cuda" if cuda_ok else "cpu"
-            if not cuda_ok:
-                logger.warning("CUDA unavailable; trying CPU PyTorch.")
-            from sentence_transformers import SentenceTransformer  # noqa: PLC0415
-            self.model: Any = SentenceTransformer(
-                model_path, device=device, local_files_only=True, trust_remote_code=False
+        import os
+
+        self._use_onnx = os.environ.get("ML_EMBEDDING_BACKEND", "torch") == "onnx"
+        if self._use_onnx:
+            from pathlib import Path
+
+            import onnxruntime as ort
+            from tokenizers import Tokenizer
+
+            options = ort.SessionOptions()
+            options.intra_op_num_threads = 1
+            options.inter_op_num_threads = 1
+            options.enable_cpu_mem_arena = False
+            options.enable_mem_pattern = False
+            self.model = ort.InferenceSession(
+                str(Path(model_path) / "model.onnx"), sess_options=options,
+                providers=["CPUExecutionProvider"],
             )
-            self.model.eval()
-            if self.model.get_embedding_dimension() != 384:
-                raise RuntimeError("Embedding model must produce exactly 384 dimensions")
-            self._torch = torch
-            logger.info("Embedder loaded via PyTorch device=%s", device)
-        except Exception as torch_err:  # noqa: BLE001
-            logger.warning("PyTorch unavailable (%s); falling back to ONNX Runtime.", type(torch_err).__name__)
-            try:
-                from optimum.onnxruntime import ORTModelForFeatureExtraction  # noqa: PLC0415
-                from transformers import AutoTokenizer  # noqa: PLC0415
-                self.model = ORTModelForFeatureExtraction.from_pretrained(
-                    model_path, local_files_only=True
-                )
-                self._tokenizer = AutoTokenizer.from_pretrained(
-                    model_path, local_files_only=True
-                )
-                self._use_onnx = True
-                logger.info("Embedder loaded via ONNX Runtime (~250 MB RAM).")
-            except Exception as onnx_err:  # noqa: BLE001
-                raise RuntimeError(
-                    f"Could not load embedding model via PyTorch ({torch_err}) or ONNX ({onnx_err})"
-                ) from onnx_err
+            self._tokenizer = Tokenizer.from_file(str(Path(model_path) / "tokenizer.json"))
+            self._tokenizer.no_truncation()
+            self._tokenizer.no_padding()
+            logger.info("Embedder loaded via quantized ONNX CPU backend")
+            return
+
+        import torch
+        from sentence_transformers import SentenceTransformer
+
+        if torch.version.hip:
+            raise RuntimeError("ROCm/HIP PyTorch is not supported.")
+        device = "cuda" if torch.version.cuda and torch.cuda.is_available() else "cpu"
+        self.model: Any = SentenceTransformer(
+            model_path, device=device, local_files_only=True, trust_remote_code=False
+        )
+        self.model.eval()
+        if self.model.get_embedding_dimension() != 384:
+            raise RuntimeError("Embedding model must produce exactly 384 dimensions")
+        self._torch = torch
+        logger.info("Embedder loaded via PyTorch device=%s", device)
 
     def embed(self, text: str) -> list[float]:
         """Embed without silent truncation, returning normalized Python floats."""
@@ -73,18 +76,20 @@ class Embedder:
         return self._validate(vector.tolist())
 
     def _embed_onnx(self, text: str) -> list[float]:
-        enc = self._tokenizer(
-            text, return_tensors="np", truncation=False, add_special_tokens=True
-        )
-        if enc["input_ids"].shape[1] > _MAX_SEQ_LEN:
+        encoded = self._tokenizer.encode(text, add_special_tokens=True)
+        if len(encoded.ids) > _MAX_SEQ_LEN:
             raise ServiceError(
-                422,
-                "embedding_text_too_long",
+                422, "embedding_text_too_long",
                 f"Text exceeds this model's {_MAX_SEQ_LEN}-token limit; split into shorter passages.",
             )
-        outputs = self.model(**enc)
+        enc = {
+            "input_ids": np.asarray([encoded.ids], dtype=np.int64),
+            "attention_mask": np.asarray([encoded.attention_mask], dtype=np.int64),
+            "token_type_ids": np.asarray([encoded.type_ids], dtype=np.int64),
+        }
+        inputs = {item.name: enc[item.name] for item in self.model.get_inputs()}
+        token_embeddings = self.model.run(None, inputs)[0]
         # Mean pooling — pure numpy, no PyTorch needed
-        token_embeddings = outputs.last_hidden_state  # (1, seq, 384)
         mask = enc["attention_mask"].astype(np.float32)[..., np.newaxis]  # (1, seq, 1)
         pooled = (token_embeddings * mask).sum(axis=1) / mask.sum(axis=1).clip(min=1e-9)
         norm = pooled / np.linalg.norm(pooled, axis=-1, keepdims=True).clip(min=1e-9)
