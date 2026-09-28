@@ -30,6 +30,7 @@ class Settings(BaseSettings):
     gpu_concurrency: int = Field(default=1, ge=1, le=1)
     gpu_queue_timeout: float = Field(default=30.0, gt=0, le=600)
     pdf_concurrency: int = Field(default=2, ge=1, le=8)
+    max_active_requests: int = Field(default=4, ge=1, le=128)
     max_pdf_bytes: int = Field(default=10 * 1024 * 1024, ge=1024)
     max_pdf_pages: int = Field(default=20, ge=1, le=100)
     max_resume_chars: int = Field(default=24000, ge=100, le=100000)

@@ -129,7 +129,7 @@ async def test_mixed_parallel_api_work_is_serial_on_gpu():
         patch("app.main.Embedder", SlowEmbedder),
         patch("app.main.ResumeExtractor", SlowExtractor),
     ):
-        app = create_app()
+        app = create_app(Settings(max_active_requests=128))
         async with app.router.lifespan_context(app):
             async with httpx.AsyncClient(
                 transport=httpx.ASGITransport(app=app), base_url="http://test"

@@ -1,0 +1,22 @@
+{
+  "checked_at": "2026-09-27T14:13:55.284906+00:00",
+  "url": "https://charming-insight-production-3c8b.up.railway.app",
+  "synthetic_only": true,
+  "readiness_status": 200,
+  "docs_status": 200,
+  "embedding_status": 200,
+  "embedding_seconds": 0.313,
+  "dimensions": 384,
+  "embedding_normalized": true,
+  "resume_status": 503,
+  "resume_seconds": 0.312,
+  "invalid_pdf_rejected": false,
+  "all_passed": false,
+  "isolated_followup": {
+    "resume_status": 200,
+    "seconds": 5.938,
+    "schema_valid": true,
+    "expected_fields": true
+  },
+  "isolated_invalid_pdf_status": 400
+}

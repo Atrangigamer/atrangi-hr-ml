@@ -23,6 +23,32 @@ from .schemas import EmbeddingRequest, EmbeddingResponse, ErrorResponse, ResumeS
 logger = logging.getLogger("ml_service")
 
 
+class RequestAdmissionMiddleware:
+    """Bound active POST bodies before reading uploads; idle sockets consume no slot."""
+
+    def __init__(self, app: ASGIApp, limit: int) -> None:
+        self.app = app
+        self.limit = limit
+        self.active = 0
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http" or scope["method"] != "POST":
+            await self.app(scope, receive, send)
+            return
+        # No await between checking/incrementing: atomic on the single ASGI loop.
+        if self.active >= self.limit:
+            response = JSONResponse(status_code=503, headers={"Retry-After": "5"}, content={
+                "error": {"code": "capacity_busy", "message": "Service is busy; retry with backoff."}
+            })
+            await response(scope, receive, send)
+            return
+        self.active += 1
+        try:
+            await self.app(scope, receive, send)
+        finally:
+            self.active -= 1
+
+
 class BodyLimitMiddleware:
     """Cap actual request bytes before multipart parsing, including chunked bodies.
 
@@ -143,6 +169,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     application = FastAPI(title="atrangi HR ML Service", version="1.0.0", lifespan=lifespan)
     application.add_middleware(BodyLimitMiddleware, limit=config.max_pdf_bytes + 65536)
+
+    application.add_middleware(RequestAdmissionMiddleware, limit=config.max_active_requests)
 
     @application.exception_handler(ServiceError)
     async def service_error(_: Request, exc: ServiceError) -> JSONResponse:

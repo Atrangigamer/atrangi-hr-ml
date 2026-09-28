@@ -28,6 +28,8 @@ COPY --chown=mlservice:mlservice app ./app
 # Embed the ONNX embedding model (no PyTorch needed at runtime).
 COPY --from=weights --chown=mlservice:mlservice /models/embedding /models/embedding
 
+ENV ML_MAX_ACTIVE_REQUESTS=2
+
 USER mlservice
 EXPOSE 8000
 
@@ -36,5 +38,5 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=120s --retries=3 \
 
 CMD ["python", "-m", "uvicorn", "app.main:app", \
      "--host", "0.0.0.0", "--port", "8000", \
-     "--workers", "1", "--limit-concurrency", "4", \
-     "--timeout-keep-alive", "5", "--no-access-log"]
+     "--workers", "1", "--limit-concurrency", "64", \
+     "--timeout-keep-alive", "1", "--no-access-log"]

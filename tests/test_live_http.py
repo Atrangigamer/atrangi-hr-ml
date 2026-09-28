@@ -10,6 +10,7 @@ import httpx
 import uvicorn
 from test_service import FakeEmbedder, FakeExtractor, pdf_bytes
 
+from app.config import Settings
 from app.main import create_app
 
 
@@ -19,7 +20,7 @@ def test_live_server_mixed_requests_and_shutdown():
         patch("app.main.Embedder", FakeEmbedder),
         patch("app.main.ResumeExtractor", FakeExtractor),
     ):
-        app = create_app()
+        app = create_app(Settings(max_active_requests=128))
         listener = socket.socket()
         listener.bind(("127.0.0.1", 0))
         address = f"http://127.0.0.1:{listener.getsockname()[1]}"

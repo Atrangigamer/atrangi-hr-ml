@@ -23,3 +23,10 @@ For defects: reproduce with a failing test, fix, run pytest and Ruff, then qa_lo
 Do not replace unavailable CUDA tests with mocks and claim real inference succeeded.
 Update OpenAPI, docs and assessment when contracts or verification results change.
 Do not commit model weights, private resumes, credentials or local environment files.
+
+## Railway profile (latest user deployment plan)
+Dockerfile.free uses explicit ML_EMBEDDING_BACKEND=onnx, raw onnxruntime and the
+pinned quantized model. Do not reintroduce torch/transformers/optimum into that
+runtime. CUDA remains supported in the separate local image. Validate free-image
+inference under 512 MiB before publication. Railway selects Dockerfile.free via
+railway.toml. See docs/RAILWAY_DEPLOYMENT.md. Never print credential-bearing remotes.

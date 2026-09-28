@@ -1,6 +1,6 @@
 {
   "Hazma_Backend.zip": {
-    "sha256": "81c30bf4abc433047f079792b75a5711d9e25962b4255b1b31f876dc21e745fb",
+    "sha256": "6fa6617cd05ae4cb89e90b7442ab73a499510712c7cc41e1e731dc4502da8e0a",
     "files": [
       "docs/ANTIGRAVITY_PROVIDER.md",
       "docs/TEAM_HANDOFF.md",
@@ -22,7 +22,7 @@
     ]
   },
   "Analytics_Lead.zip": {
-    "sha256": "2454672a20938f844127a994a1092bd8ed30874a93480056fd9dbbaf17cf7c12",
+    "sha256": "4a0c5702f096b19b1fea0b6db076da4e2918e3bd252eb9333b1b9ae45f8ac7a3",
     "files": [
       "docs/ANTIGRAVITY_PROVIDER.md",
       "docs/TEAM_HANDOFF.md",
@@ -40,7 +40,7 @@
     ]
   },
   "Ele_Frontend.zip": {
-    "sha256": "9292e0fe2f1710ef3ff7aeaa2308e984a98a22ce2cd3ff8bc5f70e50892376f6",
+    "sha256": "03979998c99432666c3f906b83748e6a555651e5aa7272e61f1bfe80e5697afd",
     "files": [
       "docs/ANTIGRAVITY_PROVIDER.md",
       "docs/TEAM_HANDOFF.md",

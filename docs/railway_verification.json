@@ -1,0 +1,23 @@
+{
+  "checked_at": "2026-09-27T14:03:22.496990+00:00",
+  "commit": "dd4896b",
+  "memory_limit_mib": 512,
+  "backend": "quantized_onnx_cpu",
+  "local_checks": {
+    "ready": true,
+    "embedding": true,
+    "resume_status": 200,
+    "resume_fields": true,
+    "invalid_pdf": true,
+    "body_limit": true
+  },
+  "github_ci": "passed",
+  "github_run": "https://github.com/Atrangigamer/atrangi-hr-ml/actions/runs/36324390116",
+  "published_image": "ghcr.io/atrangigamer/atrangi-hr-ml:dd4896bd33420f93c35993e29c3e7f5da6e3e4db",
+  "public_url": "https://charming-insight-production-3c8b.up.railway.app",
+  "public_readiness_status": 502,
+  "railway_live_verified": false,
+  "user_target_service": "099738b6-9ed6-427a-8541-03c59a060f55",
+  "github_deployment_service": "04df63ea-187a-4cf0-8d59-701dc2992610",
+  "blocker": "Need target service deployment logs or redeploy of corrected image; UI control tool initialization failed."
+}
